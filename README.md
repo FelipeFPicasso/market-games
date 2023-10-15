@@ -42,7 +42,7 @@
       - GET: /report
 ---
 - *Postman*
-  - Colletion
+  - Collection
     - ![image](https://github.com/FelipeFPicasso/market-games/assets/127898269/29e46d2d-e951-4471-9c59-c349916d1d3e)
 - *Xmind*
   - ![image](https://github.com/FelipeFPicasso/market-games/assets/127898269/1f7d0374-b7e4-4041-a21f-f98f4170ba75)
