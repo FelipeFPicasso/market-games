@@ -11,6 +11,8 @@
         - MySql 8.0
 - *Instalação*
   - GIT clone https://github.com/FelipeFPicasso/market-games.git
+  - Run MarketGameApplication.kt
+    - ![image](https://github.com/FelipeFPicasso/market-games/assets/127898269/f34151fb-c668-4171-a4f2-14a85225d575)
 ---
 ## EndPoints
 - *URL*
