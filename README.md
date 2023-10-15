@@ -1,6 +1,6 @@
 ## API (Back-End)
 *Descrição:*
-- Este projeto é uma aplicação de um market place, voltado para revenda de jogos eletrônicos.
+- Este projeto é uma aplicação de um marketplace voltado para a revenda de jogos eletrônicos.
 ---
 - *Tecnologias*
     - Framework
