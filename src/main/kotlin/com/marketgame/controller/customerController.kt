@@ -9,6 +9,7 @@ import com.marketgame.extension.toResponse
 import com.marketgame.service.CustomerService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -30,17 +31,20 @@ fun create(@RequestBody @Valid customer: PostCustomerRequest){
 }
 
 @GetMapping("/{id}")
+@PreAuthorize("hasRole('ROLE_ADMIN') || #id == authentication.principal.id")
 fun getCustomer(@PathVariable id:Int): CustomerResponse {
     return customerService.findById(id).toResponse()
 }
 
 @PutMapping("/{id}")
+@PreAuthorize("hasRole('ROLE_ADMIN') || #id == authentication.principal.id")
 @ResponseStatus(HttpStatus.NO_CONTENT)
 fun update(@PathVariable id:Int, @RequestBody @Valid customer: PutCustomerRequest) {
     val customerSaved = customerService.findById(id)
     customerService.update(customer.toCustomerModel(customerSaved))
 }
 @DeleteMapping("/{id}")
+@PreAuthorize("hasRole('ROLE_ADMIN') || #id == authentication.principal.id")
 @ResponseStatus(HttpStatus.NO_CONTENT)
 fun delete(@PathVariable id:Int){
     customerService.delete(id)

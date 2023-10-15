@@ -37,9 +37,9 @@ dependencies {
 	implementation("javax.xml.bind:jaxb-api:2.3.1")
 
 
-	implementation ("io.springfox:springfox-swagger2:3.0.0")
-	implementation ("io.springfox:springfox-swagger-ui:3.0.0")
-	implementation ("io.springfox:springfox-boot-starter:3.0.0")
+
+
+	implementation("io.springfox:springfox-boot-starter:3.0.0")
 
 	implementation ("org.flywaydb:flyway-core")
 	implementation ("org.flywaydb:flyway-mysql")
