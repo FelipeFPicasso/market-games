@@ -5,6 +5,11 @@
 - *Tecnologias*
     - Framework
         - Spring Boot (3.1.4)
+          - flyway (9.19.0)
+          - JsonWebToken (0.9.1)
+          - Mockk (1.12.0)
+          - Sprig Securit Test (6.1.5)
+          - Jacoco
     - Linguagem
         - Kotlin (1.8.22)
     - Database
