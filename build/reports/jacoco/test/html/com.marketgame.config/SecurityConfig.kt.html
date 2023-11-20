@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SecurityConfig.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">market-game</a> &gt; <a href="index.source.html" class="el_package">com.marketgame.config</a> &gt; <span class="el_source">SecurityConfig.kt</span></div><h1>SecurityConfig.kt</h1><pre class="source lang-java linenums">package com.marketgame.config
+
+import com.marketgame.Security.AuthenticationFilter
+import com.marketgame.Security.AuthorizationFilter
+import com.marketgame.Security.JwtUtil
+import com.marketgame.enums.Role
+import com.marketgame.repository.CustomerRepository
+import com.marketgame.service.UserDetailsCustomService
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.builders.WebSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.web.SecurityFilterChain
+
+
+<span class="fc" id="L24">@Configuration</span>
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+<span class="fc" id="L27">class SecurityConfig(</span>
+
+
+<span class="fc" id="L30">    private val customerRepository: CustomerRepository,</span>
+<span class="fc" id="L31">    private val authenticationConfiguration: AuthenticationConfiguration,</span>
+<span class="fc" id="L32">    private val userDetails: UserDetailsCustomService,</span>
+<span class="fc" id="L33">    private val jwtUtil: JwtUtil</span>
+){
+
+
+<span class="fc" id="L37">    private val PUBLIC_MATCHERS = arrayOf&lt;String&gt;()</span>
+
+<span class="fc" id="L39">    private val PUBLIC_POST_MATCHERS = arrayOf(</span>
+<span class="fc" id="L40">        &quot;/customer&quot;</span>
+    )
+
+<span class="fc" id="L43">    private val ADMIN_MATCHERS = arrayOf(</span>
+<span class="fc" id="L44">        &quot;/admin/**&quot;</span>
+    )
+
+    @Bean
+    @Throws(Exception::class)
+    fun authenticationManager(): AuthenticationManager {
+<span class="fc" id="L50">        return authenticationConfiguration.authenticationManager</span>
+    }
+
+
+     fun filterChain(auth: AuthenticationManagerBuilder){
+<span class="nc" id="L55">        auth.userDetailsService(userDetails).passwordEncoder(bCryptPasswordEncoder())</span>
+<span class="nc" id="L56">    }</span>
+
+    @Bean
+    fun filterChain(http: HttpSecurity): SecurityFilterChain {
+<span class="fc" id="L60">        http.cors().and().csrf().disable()</span>
+<span class="fc" id="L61">        http.authorizeHttpRequests()</span>
+<span class="fc" id="L62">            .requestMatchers(*PUBLIC_MATCHERS).permitAll()</span>
+<span class="fc" id="L63">            .requestMatchers(HttpMethod.POST, *PUBLIC_POST_MATCHERS).permitAll()</span>
+<span class="fc" id="L64">            .requestMatchers(*ADMIN_MATCHERS).hasAnyAuthority(Role.ADMIN.description)</span>
+<span class="fc" id="L65">            .anyRequest().authenticated()</span>
+
+<span class="fc" id="L67">        http.addFilter(AuthenticationFilter(authenticationManager(),customerRepository, jwtUtil))</span>
+<span class="fc" id="L68">        http.addFilter(AuthorizationFilter(authenticationManager(), userDetails, jwtUtil))</span>
+<span class="fc" id="L69">        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)</span>
+
+<span class="fc" id="L71">        return http.build()</span>
+
+    }
+
+     fun configure(web: WebSecurity) {
+<span class="nc" id="L76">        web.ignoring()</span>
+<span class="nc" id="L77">            .requestMatchers(</span>
+<span class="nc" id="L78">                &quot;/v2/api-docs&quot;,</span>
+<span class="nc" id="L79">                &quot;/v3/api-docs&quot;,</span>
+<span class="nc" id="L80">                &quot;/configuration/ui&quot;,</span>
+<span class="nc" id="L81">                &quot;/swagger-resources/**&quot;,</span>
+<span class="nc" id="L82">                &quot;/configuration/security&quot;,</span>
+<span class="nc" id="L83">                &quot;/swagger-ui/**&quot;,</span>
+<span class="nc" id="L84">                &quot;/webjars/**&quot;,</span>
+<span class="nc" id="L85">                &quot;/csrf/**&quot;</span>
+            )
+<span class="nc" id="L87">    }</span>
+
+
+    /*@Bean
+    fun filterChain(http: HttpSecurity): SecurityFilterChain {
+        http {
+            authorizeRequests {
+                authorize(anyRequest, authenticated)
+            }
+            formLogin { }
+            httpBasic { }
+        }
+        return http.build()
+    }*/
+
+
+
+    @Bean
+    fun bCryptPasswordEncoder(): BCryptPasswordEncoder{
+<span class="fc" id="L106">        return BCryptPasswordEncoder()</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

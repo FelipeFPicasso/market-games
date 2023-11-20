@@ -13,7 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("customer")
+@RequestMapping("customers")
 class customerController (
     val customerService: CustomerService
 ){

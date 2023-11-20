@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomerService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">market-game</a> &gt; <a href="index.source.html" class="el_package">com.marketgame.service</a> &gt; <span class="el_source">CustomerService.kt</span></div><h1>CustomerService.kt</h1><pre class="source lang-java linenums">package com.marketgame.service
+
+import com.marketgame.enums.CustomerStatus
+import com.marketgame.enums.Errors
+import com.marketgame.enums.Role
+import com.marketgame.exception.NotFoundException
+import com.marketgame.model.CustomerModel
+import com.marketgame.repository.CustomerRepository
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.stereotype.Service
+
+<span class="fc" id="L12">@Service</span>
+<span class="fc" id="L13">class CustomerService (</span>
+<span class="fc" id="L14">    val customerRepository: CustomerRepository,</span>
+<span class="fc" id="L15">    val gameService: GameService,</span>
+<span class="fc" id="L16">    private val bCrypt: BCryptPasswordEncoder</span>
+) {
+
+    fun getAll(name: String?): List&lt;CustomerModel&gt; {
+<span class="fc bfc" id="L20" title="All 2 branches covered.">        name?.let {</span>
+<span class="fc" id="L21">            return customerRepository.findByNameContaining(it)</span>
+        }
+<span class="fc" id="L23">        return customerRepository.findAll().toList()</span>
+    }
+
+    fun create(customer: CustomerModel){
+<span class="fc" id="L27">        val customerCopy = customer.copy(</span>
+<span class="fc" id="L28">            roles = setOf(Role.CUSTOMER),</span>
+<span class="fc" id="L29">            password = bCrypt.encode(customer.password)</span>
+        )
+<span class="fc" id="L31">        customerRepository.save(customerCopy)</span>
+<span class="fc" id="L32">    }</span>
+
+    fun findById(id:Int): CustomerModel {
+<span class="pc" id="L35">        return customerRepository.findById(id).orElseThrow{NotFoundException(Errors.MG201.message.format(id), Errors.MG201.code )}</span>
+    }
+
+    fun update(customer: CustomerModel) {
+
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        if(!customerRepository.existsById(customer.id!!)){</span>
+<span class="nc" id="L41">            throw NotFoundException(Errors.MG201.message.format(customer.id), Errors.MG201.code)</span>
+        }
+
+<span class="fc" id="L44">        customerRepository.save(customer)</span>
+<span class="fc" id="L45">    }</span>
+
+    fun delete(id: Int){
+<span class="fc" id="L48">        val customer = findById(id)</span>
+<span class="fc" id="L49">        gameService.deleteByCustomer(customer)</span>
+
+<span class="fc" id="L51">        customer.status = CustomerStatus.INATIVO</span>
+<span class="fc" id="L52">        customerRepository.save(customer)</span>
+<span class="fc" id="L53">    }</span>
+
+    fun emailAvailable(email: String): Boolean {
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        return !customerRepository.existsByEmail(email)</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

@@ -3,7 +3,9 @@ package com.marketgame.controller
 import com.marketgame.controller.request.PostGameRequest
 import com.marketgame.controller.request.PutGameRequest
 import com.marketgame.controller.response.GameResponse
+import com.marketgame.controller.response.PageResponse
 import com.marketgame.extension.toGameModel
+import com.marketgame.extension.toPageResponse
 import com.marketgame.extension.toResponse
 import com.marketgame.service.CustomerService
 import com.marketgame.service.GameService
@@ -25,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
-@RequestMapping("game")
+@RequestMapping("games")
 class GameController (
     val gameService: GameService,
     val customerService: CustomerService
@@ -40,9 +42,9 @@ class GameController (
     }
 
     @GetMapping
-    fun findAll(@PageableDefault(page = 0, size = 5) pageable: Pageable): Page<GameResponse>{
+    fun findAll(@PageableDefault(page = 0, size = 5) pageable: Pageable): PageResponse<GameResponse> {
 
-        return gameService.findAll(pageable).map { it.toResponse() }
+        return gameService.findAll(pageable).map { it.toResponse() }.toPageResponse()
     }
 
     @GetMapping("/active")

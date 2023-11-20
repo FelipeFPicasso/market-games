@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">market-game</a> &gt; <a href="index.source.html" class="el_package">com.marketgame.service</a> &gt; <span class="el_source">GameService.kt</span></div><h1>GameService.kt</h1><pre class="source lang-java linenums">package com.marketgame.service
+
+import com.marketgame.enums.Errors
+import com.marketgame.enums.GameStatus
+import com.marketgame.exception.NotFoundException
+import com.marketgame.model.CustomerModel
+import com.marketgame.model.GameModel
+import com.marketgame.repository.GameRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
+
+<span class="fc" id="L13">@Service</span>
+<span class="fc" id="L14">class GameService (</span>
+<span class="pc" id="L15">    val gameRepository: GameRepository</span>
+){
+
+    fun create(game: GameModel) {
+<span class="nc" id="L19">        gameRepository.save(game)</span>
+<span class="nc" id="L20">    }</span>
+
+    fun findAll(pageable: Pageable): Page&lt;GameModel&gt; {
+<span class="nc" id="L23">        return gameRepository.findAll(pageable)</span>
+    }
+
+    fun findActives(pageable: Pageable): Page&lt;GameModel&gt; {
+<span class="nc" id="L27">        return gameRepository.findByStatus(GameStatus.ATIVO, pageable)</span>
+    }
+
+    fun findById(id: Int): GameModel {
+<span class="nc" id="L31">        return gameRepository.findById(id).orElseThrow{NotFoundException(Errors.MG101.message.format(id), Errors.MG101.code)}</span>
+    }
+
+    fun delete(id: Int) {
+<span class="nc" id="L35">        val game = findById(id)</span>
+
+<span class="nc" id="L37">        game.status = GameStatus.CANCELADO</span>
+
+<span class="nc" id="L39">        update(game)</span>
+<span class="nc" id="L40">    }</span>
+
+    fun update(game: GameModel) {
+<span class="nc" id="L43">        gameRepository.save(game)</span>
+<span class="nc" id="L44">    }</span>
+
+    fun deleteByCustomer(customer: CustomerModel) {
+<span class="nc" id="L47">        val games = gameRepository.findByCustomer(customer)</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        for(game in games){</span>
+<span class="nc" id="L49">            game.status = GameStatus.DELETADO</span>
+        }
+<span class="nc" id="L51">        gameRepository.saveAll(games)</span>
+
+<span class="nc" id="L53">    }</span>
+
+    fun findAllByIds(gameIds: Set&lt;Int&gt;): List&lt;GameModel&gt; {
+<span class="nc" id="L56">        return gameRepository.findAllById(gameIds).toList()</span>
+    }
+
+    fun purchase(games: MutableList&lt;GameModel&gt;) {
+<span class="nc" id="L60">        games.map {</span>
+<span class="nc" id="L61">            it.status = GameStatus.VENDIDO</span>
+<span class="nc" id="L62">        }</span>
+<span class="nc" id="L63">        gameRepository.saveAll(games)</span>
+
+<span class="nc" id="L65">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

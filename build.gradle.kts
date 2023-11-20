@@ -7,6 +7,7 @@ plugins {
 	kotlin("jvm") version "1.8.22"
 	kotlin("plugin.spring") version "1.8.22"
 	kotlin("plugin.jpa") version "1.8.22"
+	jacoco
 }
 
 group = "com.marketgame"
@@ -47,6 +48,13 @@ dependencies {
 	runtimeOnly("com.mysql:mysql-connector-j")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+	testImplementation("io.mockk:mockk:1.12.0")
+
+	//testImplementation("org.springframework.security:spring-security-test:5.5.2")
+
+	testImplementation("org.springframework.security:spring-security-test:6.1.5")
+
 }
 
 tasks.withType<KotlinCompile> {

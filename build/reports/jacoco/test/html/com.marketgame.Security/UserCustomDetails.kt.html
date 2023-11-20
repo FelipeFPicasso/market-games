@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserCustomDetails.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">market-game</a> &gt; <a href="index.source.html" class="el_package">com.marketgame.Security</a> &gt; <span class="el_source">UserCustomDetails.kt</span></div><h1>UserCustomDetails.kt</h1><pre class="source lang-java linenums">package com.marketgame.Security
+
+import com.marketgame.enums.CustomerStatus
+import com.marketgame.model.CustomerModel
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
+
+<span class="nc" id="L9">class UserCustomDetails(val customerModel: CustomerModel): UserDetails {</span>
+<span class="nc" id="L10">    val id: Int = customerModel.id!!</span>
+<span class="nc" id="L11">    override fun getAuthorities(): MutableCollection&lt;out GrantedAuthority&gt; = customerModel.roles.map { SimpleGrantedAuthority(it.description) }.toMutableList()</span>
+<span class="nc" id="L12">    override fun getPassword(): String = customerModel.password</span>
+<span class="nc" id="L13">    override fun getUsername(): String = customerModel.id.toString()</span>
+<span class="nc" id="L14">    override fun isAccountNonExpired(): Boolean = true</span>
+<span class="nc" id="L15">    override fun isAccountNonLocked(): Boolean = true</span>
+<span class="nc" id="L16">    override fun isCredentialsNonExpired(): Boolean = true</span>
+<span class="nc bnc" id="L17" title="All 2 branches missed.">    override fun isEnabled(): Boolean = customerModel.status == CustomerStatus.ATIVO</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

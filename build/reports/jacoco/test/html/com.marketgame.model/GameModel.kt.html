@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameModel.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">market-game</a> &gt; <a href="index.source.html" class="el_package">com.marketgame.model</a> &gt; <span class="el_source">GameModel.kt</span></div><h1>GameModel.kt</h1><pre class="source lang-java linenums">package com.marketgame.model
+
+import com.marketgame.enums.Errors
+import com.marketgame.enums.GameStatus
+import com.marketgame.exception.BadRequestException
+import jakarta.persistence.*
+import org.springframework.web.client.HttpClientErrorException.BadRequest
+import java.math.BigDecimal
+
+<span class="nc" id="L10">@Entity(name = &quot;game&quot;)</span>
+<span class="nc" id="L11">data class GameModel(</span>
+<span class="nc" id="L12">    @Id</span>
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+<span class="nc" id="L14">    var id: Int? = null,</span>
+
+<span class="nc" id="L16">    @Column</span>
+<span class="nc" id="L17">    var name: String,</span>
+
+<span class="nc" id="L19">    @Column</span>
+<span class="nc" id="L20">    var price: BigDecimal,</span>
+
+
+
+<span class="nc" id="L24">    @ManyToOne</span>
+    @JoinColumn(name=&quot;customer_id&quot;)
+<span class="nc" id="L26">    var customer: CustomerModel? = null</span>
+
+){
+    @Column
+    @Enumerated(EnumType.STRING)
+<span class="nc" id="L31">    var status: GameStatus? = null</span>
+        set(value){
+<span class="nc bnc" id="L33" title="All 4 branches missed.">            if(field == GameStatus.CANCELADO || field == GameStatus.DELETADO)</span>
+<span class="nc" id="L34">                throw BadRequestException(Errors.MG102.message.format(field), Errors.MG102.code)</span>
+
+<span class="nc" id="L36">            field = value</span>
+<span class="nc" id="L37">        }</span>
+
+<span class="nc" id="L39">    constructor(id: Int? = null,</span>
+                name: String,
+                price: BigDecimal,
+<span class="nc" id="L42">                customer: CustomerModel? = null,</span>
+<span class="nc" id="L43">                status: GameStatus?): this(id, name, price, customer){</span>
+<span class="nc" id="L44">        this.status = status</span>
+<span class="nc" id="L45">                }</span>
+<span class="nc" id="L46">}</span>
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

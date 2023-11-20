@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthorizationFilter.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">market-game</a> &gt; <a href="index.source.html" class="el_package">com.marketgame.Security</a> &gt; <span class="el_source">AuthorizationFilter.kt</span></div><h1>AuthorizationFilter.kt</h1><pre class="source lang-java linenums">package com.marketgame.Security
+
+import com.marketgame.exception.AuthenticationException
+import com.marketgame.service.UserDetailsCustomService
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
+
+<span class="fc" id="L13">class AuthorizationFilter(</span>
+    authenticationManager: AuthenticationManager,
+<span class="fc" id="L15">    private val userDetails: UserDetailsCustomService,</span>
+<span class="fc" id="L16">    private val jwtUtil: JwtUtil</span>
+<span class="fc" id="L17">): BasicAuthenticationFilter(authenticationManager) {</span>
+
+    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
+<span class="nc" id="L20">        val authorization = request.getHeader(&quot;Authorization&quot;)</span>
+<span class="nc bnc" id="L21" title="All 4 branches missed.">        if(authorization != null &amp;&amp; authorization.startsWith(&quot;Bearer &quot;)){</span>
+<span class="nc" id="L22">            val auth = getAuthentication(authorization.split(&quot; &quot;)[1])</span>
+<span class="nc" id="L23">            SecurityContextHolder.getContext().authentication = auth</span>
+        }
+
+<span class="nc" id="L26">        chain.doFilter(request, response)</span>
+<span class="nc" id="L27">    }</span>
+
+    private fun getAuthentication(token: String): UsernamePasswordAuthenticationToken {
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        if(!jwtUtil.isValidToken(token)){</span>
+<span class="nc" id="L31">            throw AuthenticationException(&quot;Token invÃ¡lido&quot;, &quot;999&quot;)</span>
+        }
+<span class="nc" id="L33">        val subject = jwtUtil.getSubject(token)</span>
+<span class="nc" id="L34">        val customer = userDetails.loadUserByUsername(subject)</span>
+<span class="nc" id="L35">        return UsernamePasswordAuthenticationToken(customer, null, customer.authorities)</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.9.202303310957</span></div></body></html>

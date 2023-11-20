@@ -6,10 +6,12 @@ import com.marketgame.controller.request.PutCustomerRequest
 import com.marketgame.controller.request.PutGameRequest
 import com.marketgame.controller.response.CustomerResponse
 import com.marketgame.controller.response.GameResponse
+import com.marketgame.controller.response.PageResponse
 import com.marketgame.enums.CustomerStatus
 import com.marketgame.enums.GameStatus
 import com.marketgame.model.CustomerModel
 import com.marketgame.model.GameModel
+import org.springframework.data.domain.Page
 
 fun PostCustomerRequest.toCustomerModel(): CustomerModel {
     return CustomerModel(name = this.name, email = this.email, status = CustomerStatus.ATIVO, password = this.password)
@@ -55,5 +57,8 @@ fun GameModel.toResponse(): GameResponse {
         customer = this.customer,
         status = this.status
     )
+}
+fun <T> Page<T>.toPageResponse(): PageResponse<T>{
+    return PageResponse(this.content, this.number, this.totalElements, this.totalPages)
 }
 
